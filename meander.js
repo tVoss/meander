@@ -31,37 +31,62 @@ function HSVtoRGB(H, S, V)
     return 'rgb(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ')'
 }
 
+function getColorStyle(t) {
+    return HSVtoRGB((Math.sin(t) + 1) * 180, 1, 1);
+}
+
 function wobble(t) {
     ctx.fillStyle = '#222222';
     ctx.fillRect(0, 0, width, height);
 
     for (var x = 0; x < width; x++) {
-        var y = Math.sin(x / width * Math.PI * 5 * t / 1000) * height / 5 + height / 2 - 100;
-        ctx.fillStyle = '#00ffff'
+        var y = getWaveY(x, height / 5, 0, height / 2 - 100, 5 * t / 1000);
+        ctx.fillStyle = getColorStyle(t / 2000)
         ctx.fillRect(x, y, 1, 200);
-        var yy = Math.cos(x / width * Math.PI * 12) * height / 7 + y + 75 
-        ctx.fillStyle = '#00ff00'
+        var yy = getWaveY(x, height / 7, 0, y + 75, 12);
+        ctx.fillStyle = getColorStyle(t / 3000);
         ctx.fillRect(x, yy, 1, 50);
     }
     requestAnimationFrame(wobble)
 }
 
-function render(t) {
+function wavey(t) {
     ctx.fillStyle = '#222222';
     ctx.fillRect(0, 0, width, height);
 
     for (var x = 0; x < width; x++) {
         var y = getWaveY(x, height / 5, t / 500, height / 2 - 100, 5);
-        var h = (Math.sin(t / 2000) + 1) * 180;
-        ctx.fillStyle = HSVtoRGB(h, 1, 1);
+        ctx.fillStyle = getColorStyle(t / 2000);
         ctx.fillRect(x, y, 1, 200);
 
-        var h = (Math.sin(t / 3000) + 1) * 180;
         var yy = getWaveY(x, height / 7, t / 1000, height / 7 + y + 5, 12);
-        ctx.fillStyle = HSVtoRGB(h, 1, 1);
+        ctx.fillStyle = getColorStyle(t / 3000);
         ctx.fillRect(x, yy, 1, 50);
     }
-    requestAnimationFrame(render)
+    requestAnimationFrame(wavey)
 }
 
-requestAnimationFrame(render)
+function spiral(t) {
+    ctx.fillStyle = getColorStyle(-t / 2000);
+    ctx.fillRect(0, 0, width, height);
+    ctx.lineWidth = 5;
+
+    var x = width / 2;
+    var y = height / 2;
+    for (var r = 0; r < width / 2 * 3; r++) {
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+
+        x = Math.sin(r / width * Math.PI * 20 + t / 500) * r + width / 2;
+        y = Math.cos(r / width * Math.PI * 20 + t / 750) * r + height / 2;
+        ctx.lineWidth = 20 + Math.sin(r / width * 20 + t / 200) * 10
+        ctx.lineTo(x, y);
+
+        ctx.strokeStyle = getColorStyle(t / 3000);
+        ctx.stroke();
+    }
+
+    requestAnimationFrame(spiral);
+}
+
+requestAnimationFrame(spiral)
