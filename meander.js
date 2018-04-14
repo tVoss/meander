@@ -89,4 +89,60 @@ function spiral(t) {
     requestAnimationFrame(spiral);
 }
 
-requestAnimationFrame(spiral)
+function crawler(t) {
+    ctx.fillStyle = '#222222';
+    // ctx.fillRect(0, 0, width, height);
+
+    ctx.fillStyle = '#00ff00';
+    var lastY = getWaveY(0, 5, t / 2000, 0, 1);
+    var lastYy = getWaveY(0, 5, t / 1500, 0, 1);
+    var lastYyy = getWaveY(0, 5, t / 2500, 0, 1);
+    for (var x = 0; x < width / 2; x++) {
+        var yOffset = Math.sin(t / 500) * 50;
+        var yyOffset = Math.sin(t / 1000) * 50;
+        var yyyOffset = Math.sin(t / 1500) * 50;
+
+        var y = getWaveY(x, 5, t / 2000, 0, 1);
+        y = Math.round(y) * height / 15 + height / 2;
+        var yy = getWaveY(x, 5, t / 1500, 0, 1);
+        yy = Math.round(yy) * height / 15 + height / 2;
+        var yyy = getWaveY(x, 5, t / 2500, 0, 1);
+        yyy = Math.round(yyy) * height / 15 + height / 2;
+
+        ctx.fillStyle = getColorStyle(t / 4000);
+        if (lastY > y) {
+            ctx.fillRect(x - 10, lastY + yOffset, 10, y - lastY);
+        } else if (lastY < y) {
+            ctx.fillRect(x - 10, lastY + yOffset, 10, y - lastY + 10)
+        }
+        ctx.fillRect(x, y + yOffset, 1, 10);
+        
+        
+        ctx.fillStyle = getColorStyle(t / 7000);
+        if (lastYy > yy) {
+            ctx.fillRect(x - 10, lastYy + yyOffset, 10, yy - lastYy);
+        } else if (lastYy < yy) {
+            ctx.fillRect(x - 10, lastYy + yyOffset, 10, yy - lastYy + 10)
+        }
+        ctx.fillRect(x, yy + yyOffset, 1, 10);
+        
+
+        ctx.fillStyle = getColorStyle(t / 5000);
+        if (lastYyy > yyy) {
+            ctx.fillRect(x - 10, lastYyy + yyyOffset, 10, yyy - lastYyy);
+        } else if (lastYyy < yyy) {
+            ctx.fillRect(x - 10, lastYyy + yyyOffset, 10, yyy - lastYyy + 10)
+        }
+        ctx.fillRect(x, yyy + yyyOffset, 1, 10);
+
+        lastY = y;
+        lastYy = yy;
+        lastYyy = yyy;
+    }
+
+    requestAnimationFrame(crawler);
+}
+
+ctx.fillStyle = '#222222'
+ctx.fillRect(0, 0, width, height)
+requestAnimationFrame(crawler)
