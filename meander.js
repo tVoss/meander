@@ -10,34 +10,16 @@ function getWaveY(x, amplitude, xOffset, yOffset, frequency) {
     return amplitude * Math.sin(x / width * Math.PI * frequency + xOffset) + yOffset;
 }
 
-function mix(a, b, v)
-{
-    return (1-v)*a + v*b;
-}
-
-function HSVtoRGB(H, S, V)
-{
-    var V2 = V * (1 - S);
-    var r  = ((H>=0 && H<=60) || (H>=300 && H<=360)) ? V : ((H>=120 && H<=240) ? V2 : ((H>=60 && H<=120) ? mix(V,V2,(H-60)/60) : ((H>=240 && H<=300) ? mix(V2,V,(H-240)/60) : 0)));
-    var g  = (H>=60 && H<=180) ? V : ((H>=240 && H<=360) ? V2 : ((H>=0 && H<=60) ? mix(V2,V,H/60) : ((H>=180 && H<=240) ? mix(V,V2,(H-180)/60) : 0)));
-    var b  = (H>=0 && H<=120) ? V2 : ((H>=180 && H<=300) ? V : ((H>=120 && H<=180) ? mix(V2,V,(H-120)/60) : ((H>=300 && H<=360) ? mix(V,V2,(H-300)/60) : 0)));
-
-    var rgb = {
-        r : Math.round(r * 255),
-        g : Math.round(g * 255),
-        b : Math.round(b * 255)
-    };
-
-    return 'rgb(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ')'
-}
-
 function getColorStyle(t) {
-    return HSVtoRGB((Math.sin(t) + 1) * 180, 1, 1);
+    const h = (Math.sin(t) + 1) * 180;
+    return 'hsl(' + h + ', 100%, 50%)';
 }
 
 function wobble(t) {
     ctx.fillStyle = '#222222';
+    ctx.globalAlpha = 0.1;
     ctx.fillRect(0, 0, width, height);
+    ctx.globalAlpha = 1.0;
 
     for (var x = 0; x < width; x++) {
         var y = getWaveY(x, height / 5, 0, height / 2 - 100, 5 * t / 1000);
@@ -52,7 +34,9 @@ function wobble(t) {
 
 function wavey(t) {
     ctx.fillStyle = '#222222';
+    ctx.globalAlpha = 0.01;
     ctx.fillRect(0, 0, width, height);
+    ctx.globalAlpha = 1.0
 
     for (var x = 0; x < width; x++) {
         var y = getWaveY(x, height / 5, t / 500, height / 2 - 100, 5);
@@ -67,9 +51,12 @@ function wavey(t) {
 }
 
 function spiral(t) {
-    ctx.fillStyle = getColorStyle(-t / 2000);
+    ctx.globalAlpha = 0.2;
+    ctx.fillStyle = '#22222';
+    // ctx.fillStyle = getColorStyle(-t / 2000);
     ctx.fillRect(0, 0, width, height);
     ctx.lineWidth = 5;
+    ctx.globalAlpha = 1.0;
 
     var x = width / 2;
     var y = height / 2;
@@ -78,7 +65,7 @@ function spiral(t) {
         ctx.moveTo(x, y);
 
         x = Math.sin(r / width * Math.PI * 20 + t / 500) * r + width / 2;
-        y = Math.cos(r / width * Math.PI * 20 + t / 750) * r + height / 2;
+        y = Math.cos(r / width * Math.PI * 20 + t / 500) * r + height / 2;
         ctx.lineWidth = 20 + Math.sin(r / width * 20 + t / 200) * 10
         ctx.lineTo(x, y);
 
@@ -91,13 +78,15 @@ function spiral(t) {
 
 function crawler(t) {
     ctx.fillStyle = '#222222';
-    // ctx.fillRect(0, 0, width, height);
+    ctx.globalAlpha = 0.05;
+    ctx.fillRect(0, 0, width, height);
+    ctx.globalAlpha = 1.0;
 
     ctx.fillStyle = '#00ff00';
     var lastY = getWaveY(0, 5, t / 2000, 0, 1);
     var lastYy = getWaveY(0, 5, t / 1500, 0, 1);
     var lastYyy = getWaveY(0, 5, t / 2500, 0, 1);
-    for (var x = 0; x < width / 2; x++) {
+    for (var x = 0; x < width; x++) {
         var yOffset = Math.sin(t / 500) * 50;
         var yyOffset = Math.sin(t / 1000) * 50;
         var yyyOffset = Math.sin(t / 1500) * 50;
@@ -105,9 +94,9 @@ function crawler(t) {
         var y = getWaveY(x, 5, t / 2000, 0, 1);
         y = Math.round(y) * height / 15 + height / 2;
         var yy = getWaveY(x, 5, t / 1500, 0, 1);
-        yy = Math.round(yy) * height / 15 + height / 2;
+        yy = Math.round(yy) * height / 15 + height / 2 + 50;
         var yyy = getWaveY(x, 5, t / 2500, 0, 1);
-        yyy = Math.round(yyy) * height / 15 + height / 2;
+        yyy = Math.round(yyy) * height / 15 + height / 2 - 50;
 
         ctx.fillStyle = getColorStyle(t / 4000);
         if (lastY > y) {
@@ -145,4 +134,4 @@ function crawler(t) {
 
 ctx.fillStyle = '#222222'
 ctx.fillRect(0, 0, width, height)
-requestAnimationFrame(crawler)
+requestAnimationFrame(wobble)
