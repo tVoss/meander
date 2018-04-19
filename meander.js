@@ -132,6 +132,38 @@ function crawler(t) {
     requestAnimationFrame(crawler);
 }
 
+function kaleidoscopeFill(x, y) {
+    ctx.fillRect(x, y, 1, 1);
+    ctx.fillRect(x, height - y, 1, 1);
+    ctx.fillRect(width - x, y, 1, 1);
+    ctx.fillRect(width - x, height - y, 1, 1);
+
+
+    var xx = y * width / height;
+    var yy = x * height / width;
+
+    ctx.fillRect(xx, yy, 1, 1);
+    ctx.fillRect(xx, height - yy, 1, 1);
+    ctx.fillRect(width - xx, yy, 1, 1);
+    ctx.fillRect(width - xx, height - yy, 1, 1);
+}
+
+function kaleidoscope(t) {
+    ctx.fillStyle = '#222222'
+    ctx.fillRect(0, 0, width, height)
+
+    ctx.getImage
+
+    for (var x = 0; x < width / 2; x++) {
+        for (var y = x * height / width; y < height / 2; y++) {
+            ctx.fillStyle = getColorStyle(((x*x + y*y) + t * 100) / 5000);
+            kaleidoscopeFill(x, y);
+        }
+    }
+
+    requestAnimationFrame(kaleidoscope);
+}
+
 ctx.fillStyle = '#222222'
 ctx.fillRect(0, 0, width, height)
-requestAnimationFrame(wobble)
+requestAnimationFrame(kaleidoscope)
